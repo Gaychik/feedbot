@@ -7,7 +7,7 @@ async def start(update:Update, context: ContextTypes.DEFAULT_TYPE):
  Я помогу вам выбрать идеальное блюдо, рассчитать калории и оформить заказ 🍽️""")
 
 def get():
-    return CommandHandler("start",start)
+    return [CommandHandler("start",start)]
 
 
     

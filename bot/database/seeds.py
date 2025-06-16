@@ -10,7 +10,7 @@ CREATE TABLE IF NOT EXISTS users (
 Id integer Primary key autoincrement,
 fullname text,
 phone text,
-recommend text DEFAULT null
+role text DEFAULT user
 )
 """
     cursor.execute(sql_table_users)
@@ -24,10 +24,11 @@ def create_table_dishes():
       sql_table_dishes = ("CREATE TABLE IF NOT EXISTS dishes"
                          "Id integer Primary key autoincrement,"
                          "name text,"
-                         "calories int,"
+                         "ans_neurlink text,"
                          "price int," 
                          "url_photo text,"
-                         "tags text"
+                         "tags text",
+                         "description text"
                         )
       cursor.execute(sql_table_dishes)
 
