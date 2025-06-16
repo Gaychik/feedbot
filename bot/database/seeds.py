@@ -19,7 +19,18 @@ def create_table_orders():
 def create_table_history():
     pass 
 def create_table_dishes():
-    pass
+#       название, описание, калории, цена, фото, теги 
+# (веган, без сахара и т.п.) 
+      sql_table_dishes = ("CREATE TABLE IF NOT EXISTS dishes"
+                         "Id integer Primary key autoincrement,"
+                         "name text,"
+                         "calories int,"
+                         "price int," 
+                         "url_photo text,"
+                         "tags text"
+                        )
+      cursor.execute(sql_table_dishes)
+
 def seed():
     create_table_users()
     create_table_orders()
