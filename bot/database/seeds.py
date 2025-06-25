@@ -21,14 +21,14 @@ def create_table_history():
 def create_table_dishes():
 #       название, описание, калории, цена, фото, теги 
 # (веган, без сахара и т.п.) 
-      sql_table_dishes = ("CREATE TABLE IF NOT EXISTS dishes"
-                         "Id integer Primary key autoincrement,"
+      sql_table_dishes = ("CREATE TABLE IF NOT EXISTS dishes("
+                         "id integer Primary key autoincrement,"
                          "name text,"
-                         "ans_neurlink text,"
                          "price int," 
-                         "url_photo text,"
-                         "tags text",
-                         "description text"
+                         "photo BLOB,"
+                         "tags text,"
+                         "description text,"
+                         "ans_neurlink text NULL)"
                         )
       cursor.execute(sql_table_dishes)
 
