@@ -7,9 +7,10 @@ from telegram.ext import(
                     
 
 from telegram import Update,ReplyKeyboardMarkup,InlineKeyboardMarkup,InlineKeyboardButton
-from utils  import validation
+from utils import validation
 from database import db
 from database import models
+from handlers.dialogs.add_dish import *
 
 async def admin(update:Update,context:ContextTypes.DEFAULT_TYPE):
     await update.message.reply_text("Введите номер телефона 📞 в формате 8(000)(000)(00)(00) ")
@@ -42,16 +43,22 @@ def get():
         fallbacks=[]
     )
     add_dish_handler = ConversationHandler(
-         entry_points=[MessageHandler(filter.Text("Добавить➕"),start_add_dish)],
+         entry_points=[MessageHandler(filters.Text("Добавить➕"),start_add_dish)],
          states={
-              "name": [MessageHandler(filters.TEXT,get_name)],
-              "desc": [MessageHandler(filters.TEXT,get_desc)],
-              "photo":[MessageHandler(filters.TEXT,get_photo)]
+              "name": [MessageHandler(filters.TEXT&~filters.COMMAND,get_name),
+                       CommandHandler("cancel",cancel_add_dish)],
+              "desc": [MessageHandler(filters.TEXT&~filters.COMMAND,get_desc),
+                       CommandHandler("cancel",cancel_add_dish)],
+              "photo":[
+                   MessageHandler(filters.PHOTO,get_photo),
+                   CommandHandler("cancel",cancel_add_dish)]
          },
-         fallbacks=[]
+         fallbacks=[CommandHandler("cancel",cancel_add_dish)]
     )
-    show_handler = MessageHandler(filters.Text("Показать блюда👁‍🗨",show))
+    show_handler = MessageHandler(filters.Text("Показать блюда👁‍🗨"),show)
     return [login_handler,add_dish_handler,show_handler]
+
+
 
 
 async def show(update:Update,context:ContextTypes.DEFAULT_TYPE):
@@ -72,42 +79,7 @@ async def show(update:Update,context:ContextTypes.DEFAULT_TYPE):
             await update.message.reply_photo(d.photo,text,reply_markup=InlineKeyboardMarkup(keyboard))
 
 
-async def start_add_dish(update:Update,context:ContextTypes.DEFAULT_TYPE):
-    await update.message.reply_text("Введите название блюда")
-    return "name"
 
-async def get_name(update:Update,context:ContextTypes.DEFAULT_TYPE):
-    context.user_data["name"] = update.message.text
-   
-    await update.message.reply_text("Сделайте описание в формате: "
-                                    "[Цена]"
-                                    "[Теги: Веган/Мясоед/Безглютен/Диабетик]"
-                                    "[Описание]")
-    return "desc"
-
-async def get_desc(update:Update,context:ContextTypes.DEFAULT_TYPE):
-       context.user_data["desc"] = update.message.text
-       await update.message.reply_text("Отправь фото")
-       return "photo"
-
-
-async def get_photo(update:Update,context:ContextTypes.DEFAULT_TYPE):
-       photo = await update.message.photo[-1].get_file()
-       binary_photo = await  photo.download_as_bytearray()
-       context.user_data["photo"] = binary_photo
-       result = save_dish(context.user_data)
-       if result: 
-            await update.message.reply_text("Блюдо добавлено ✅")
-       else:
-             await update.message.reply_text("Ошибка при добавлении ☹️")
-       return ConversationHandler.END
-
-def save_dish(data):
-     name = data["name"]
-     photo = data["photo"]
-     price,tags,desc = data["desc"].split('\n')
-     dish = models.Dish(name,int(price),tags,desc,photo)
-     return db.add_dish(dish)
           
      
  

@@ -8,10 +8,11 @@ def get_user_by_phone(phone):
     return cursor.fetchone()
 def add_dish(d: models.Dish):
     try:
-        cursor.execute("INSERT INTO dishes values(?,?,?,?,?,?)",d.to_tuple())
+        cursor.execute("INSERT INTO dishes(name,price,photo,tags,description,ans_neurlink) values(?,?,?,?,?,?)",d.to_tuple())
         conn.commit()
         return True 
-    except: 
+    except Exception as e: 
+        print(e)
         return False
     
 def get_dishes():
