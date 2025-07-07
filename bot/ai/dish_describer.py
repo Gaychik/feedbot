@@ -1,13 +1,14 @@
-import requests 
+import aiohttp
 import pprint
 import json
 from dotenv import load_dotenv
+from database.models import Dish
 import os
 load_dotenv()
 token = os.getenv("TOKEN_AI")
-name_model = None
+name_model = 'meta-llama/Llama-3.2-90B-Vision-Instruct'
 
-def run():    
+async def run(target_dish:Dish):    
         headers = {
             "accept": "application/json",
             "Authorization": f"Bearer {token}"
@@ -24,7 +25,7 @@ def run():
                 {
                     "role": "user",
                     "content": 
-                    ("Тебя попросили описать блюдо: выдать историческую справку, "
+                    (f"Тебя попросили описать блюдо - {target_dish.name}: выдать историческую справку, "
                     "а также выдать расчет БЖУ. Формат ответа строгий:"
                     "Историческая справка"
                     "Расчет БЖУ"
@@ -32,12 +33,12 @@ def run():
                 }
             ]
         }
-
-        response = requests.post(url, headers=headers, json=data)
-
-        result = response.json()
-        if 'choices' in result:
-            result = result['choices'][0]['message']['content']
-            if "<think>" in result:
-                result = result.split("</think>")[-1]
+        result = ""
+        async with aiohttp.ClientSession() as session:
+            async with session.post(url, headers=headers, json=data) as response:
+                result = await response.json()
+                if 'choices' in result:
+                    result = result['choices'][0]['message']['content']
+                    if "<think>" in result:
+                        result = result.split("</think>")[-1]
         return result

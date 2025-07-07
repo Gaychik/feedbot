@@ -28,6 +28,7 @@ def create_table_dishes():
                          "photo BLOB,"
                          "tags text,"
                          "description text,"
+                         "properties text NULL,"
                          "ans_neurlink text NULL)"
                         )
       cursor.execute(sql_table_dishes)

@@ -28,8 +28,9 @@ class Dish:
         self.desc = desc
         self.photo = photo 
         self.ans_neurlink = None
+        self.properties = None
     def to_tuple(self):
-        return (self.name,self.price,self.photo,self.tags,self.desc,self.ans_neurlink)
+        return (self.name,self.price,self.photo,self.tags,self.desc,self.properties,self.ans_neurlink)
     def from_tuple(self,data):
         self.id = data[0]
         self.name = data[1]
@@ -37,7 +38,8 @@ class Dish:
         self.photo = data[3]
         self.tags = data[4]
         self.desc = data[5]
-        self.ans_neurlink = data[6]
+        self.properties = data[6]
+        self.ans_neurlink = data[7]
 
 
 

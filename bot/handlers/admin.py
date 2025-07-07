@@ -74,7 +74,7 @@ async def show(update:Update,context:ContextTypes.DEFAULT_TYPE):
                         f"Описание:\n{d.desc}"
                     )
             keyboard = [
-                [InlineKeyboardButton(text = "Хочу все знать",callback_data = f"{d.id}")]
+                [InlineKeyboardButton(text = "Хочу все знать",callback_data = f"dish_id={d.id}")]
             ]
             await update.message.reply_photo(d.photo,text,reply_markup=InlineKeyboardMarkup(keyboard))
 
