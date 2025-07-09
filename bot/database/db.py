@@ -29,14 +29,16 @@ def get_dish_by_id(dish_id):
     return cursor.fetchone()
 
 
-def update_dish_by_id(dish_id,data):
+def update_dish_by_id(dish_id,data,column):
     try:
-        cursor.execute("Update dishes set ans_neurlink = ? where id = ?",(data,dish_id))
+        cursor.execute(f"Update dishes set {column} = ? where id = ?",(data,dish_id))
         conn.commit()
         return True 
     except Exception as e:
         print(e)
         return False
+    
+
 def get_ans_neurlink(dish_id):
       cursor.execute("select ans_neurlink from dishes where id = ?",(dish_id,))
       ans_neurlink = cursor.fetchone()[0]

@@ -28,6 +28,7 @@ async def get_phone(update:Update,context:ContextTypes.DEFAULT_TYPE):
             ]
             await update.message.reply_text("Добро пожаловать в личный кабинет 👋",
                                             reply_markup=ReplyKeyboardMarkup(keyboard))
+            
             return ConversationHandler.END
         else:
              await update.message.reply_text("Пользователь не найден ❌")
@@ -55,28 +56,12 @@ def get():
          },
          fallbacks=[CommandHandler("cancel",cancel_add_dish)]
     )
-    show_handler = MessageHandler(filters.Text("Показать блюда👁‍🗨"),show)
-    return [login_handler,add_dish_handler,show_handler]
+    return [login_handler,add_dish_handler]
 
 
 
 
-async def show(update:Update,context:ContextTypes.DEFAULT_TYPE):
-    dishes:list[models.Dish] = db.get_dishes()
-    if len(dishes)==0: 
-         await update.message.reply_text("Блюда отсутствуют...")
-    else:   
-        for d in dishes: 
-            text = (
-                        f"Название:{d.name}\n"
-                        f"Цена 💵: {d.price}\n"
-                        f"Теги: {d.tags}\n"
-                        f"Описание:\n{d.desc}"
-                    )
-            keyboard = [
-                [InlineKeyboardButton(text = "Хочу все знать",callback_data = f"dish_id={d.id}")]
-            ]
-            await update.message.reply_photo(d.photo,text,reply_markup=InlineKeyboardMarkup(keyboard))
+
 
 
 

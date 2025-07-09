@@ -15,8 +15,13 @@ async def default(update:Update,context:ContextTypes.DEFAULT_TYPE):
      await update.message.reply_text("Следите за инструкциями...⚠️")
 
 async def start_add_dish(update:Update,context:ContextTypes.DEFAULT_TYPE):
-    await update.message.reply_text("Введите название блюда")
-    return "name"
+    if  'admin' in  context.user_data:
+          await update.message.reply_text("Введите название блюда")
+          return "name"
+    else:
+         await update.message.reply_text("Для начала войдите в личный кабинет админа")
+         return ConversationHandler.END
+    
 
 async def get_name(update:Update,context:ContextTypes.DEFAULT_TYPE):
     context.user_data["name"] = update.message.text
