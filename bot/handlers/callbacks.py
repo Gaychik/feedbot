@@ -6,6 +6,7 @@ from telegram.ext import(
 
 from telegram import InlineKeyboardButton, InlineKeyboardMarkup, Update
 from ai import dish_describer
+from utils.logger import log_action
 from database import db
 from database.models import Dish
 
@@ -36,6 +37,10 @@ async def want_all_know_handler(update:Update,context:CallbackContext):
                 message_id=processing_msg.message_id,
                 text="К нашему сожалению, описание блюда недоступно, обратитесь к официанту😃"
             )
+        
+        #логирование
+        log_action(user=update.effective_user.username, action=f"Клиент нажал на кнопку 'Хочу все знать' для блюда '{dish.name}' ", level="INFO")
+        
         #нужно обязательно добавить столбец properties, 
         #для характеристик блюда от самого заведения
 

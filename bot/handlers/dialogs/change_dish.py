@@ -4,12 +4,12 @@ from telegram.ext import(
                     CallbackQueryHandler,
                     ConversationHandler,
                     ContextTypes,
-                    MessageHandler
+                    MessageHandler,filters
                     )
 from telegram import Update
 
-from bot.database import db
-from bot.handlers import filters
+from database import db
+
 
 
 async def change_properties(update:Update,context:CallbackContext):

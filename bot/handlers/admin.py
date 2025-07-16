@@ -1,12 +1,15 @@
+import sqlite3
 from telegram.ext import(
                     CommandHandler,
                     ContextTypes,
                     ConversationHandler,
                     MessageHandler,
-                    filters)
+                    filters,
+                    CallbackContext)
                     
 
 from telegram import Update,ReplyKeyboardMarkup,InlineKeyboardMarkup,InlineKeyboardButton
+from utils.logger import log_action
 from utils import validation
 from database import db
 from database import models
@@ -29,11 +32,36 @@ async def get_phone(update:Update,context:ContextTypes.DEFAULT_TYPE):
             await update.message.reply_text("Добро пожаловать в личный кабинет 👋",
                                             reply_markup=ReplyKeyboardMarkup(keyboard))
             
+            #логирование
+            log_action(user=update.effective_user.username, action="Вход в личный кабинет админа", level="INFO")
+
             return ConversationHandler.END
         else:
              await update.message.reply_text("Пользователь не найден ❌")
+             #логирование
+             log_action(user=update.effective_user.username, action="Вход в личный кабинет админа. Пользователь не найден ❌", level="ERROR")
     else:
         await update.message.reply_text("Введенный номер некорректен 🔴")
+        #логирование
+        log_action(user=update.effective_user.username, action="Вход в личный кабинет админа. Введенный номер некорректен 🔴", level="ERROR")
+
+
+async def admin_view_orders(update: Update, context: CallbackContext):
+    conn = sqlite3.connect("bot.db")
+    cursor = conn.cursor()
+    cursor.execute("SELECT * FROM orders")
+    orders = cursor.fetchall()
+
+    if not orders:
+        await update.message.reply_text("Нет заказов")
+        return
+
+    text = "📋 *Все заказы:*\n"
+    for order in orders:
+        text += f"\n🆔 Заказ №{order[0]} — {order[4]} — {order[1]} блюд, {order[2]}₽, статус: {order[5]}\n"
+
+    await update.message.reply_text(text, parse_mode='Markdown')
+
 
 def get():
     login_handler = ConversationHandler(
@@ -56,8 +84,8 @@ def get():
          },
          fallbacks=[CommandHandler("cancel",cancel_add_dish)]
     )
-    return [login_handler,add_dish_handler]
-
+    admin_orders_handler = MessageHandler(filters.Text("Заказы"), admin_view_orders)
+    return [login_handler,add_dish_handler,admin_orders_handler]
 
 
 

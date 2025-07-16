@@ -3,7 +3,9 @@ from telegram import Update,ReplyKeyboardMarkup
 
 async def start(update:Update, context: ContextTypes.DEFAULT_TYPE):
    keyboard = [
-                ["Показать блюда👁‍🗨"]
+                ["Показать блюда👁‍🗨"],
+                ["Корзина🧺"],
+                ["Заказы 📋"]
             ]
    await update.message.reply_text("""
 👋 Добро пожаловать в ресторан FitFood! 
